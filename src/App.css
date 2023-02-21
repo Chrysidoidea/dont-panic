@@ -1,0 +1,29 @@
+.App {
+  display: flex;
+  width: 100%;
+  justify-content: center;
+}
+.Game-world {
+  height: 30vh;
+  width: 90vw;
+  background-color: #030e11;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .atom {
+    animation: atom-spin infinite .01s linear;
+  }
+  .atom:hover {
+    animation: atom-spin infinite .9s linear;
+
+   }
+}
+
+@keyframes atom-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(120deg);
+  }
+}
