@@ -268,7 +268,7 @@ const ClockFace = styled.div`
   align-items: flex-start;
   padding: 20px;
   justify-content: space-around;
-  top: 800px;
+  bottom: 0;
   width: 90%;
   height: 79px;
   filter: blur(.4px);
