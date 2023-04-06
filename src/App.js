@@ -1,6 +1,6 @@
 import logo from './logo.svg';
 import styled from 'styled-components';
-import {useState, useEffect} from "react";
+import {useState, useEffect} from 'react';
 
 const AtomSize = 50;
 const WorldHeight = 600;
@@ -23,34 +23,46 @@ const App = () => {
     const [interceptionHeight, setInterceptionHeight] = useState(150);
     const [score, setScore] = useState(0);
 
+    const clickHandler = () => {
+        if (!gameStarted) {
+            setGameStarted(true);
+            setGameOverDisplay('none');
+            setScore(0)
+            setVictory('none');
+        }
+        if (atomPosition < jumpPower) {
+            setAtomPosition(0);
+        } else {
+            setAtomPosition((atomPosition) => atomPosition - jumpPower);
+        }
+    }
+
     const bottomInterceptionHeight = WorldHeight - interceptionGap - interceptionHeight;
 
-
     useEffect(() => {
-        let timeId;
+        if (!gameStarted) return;
 
-        if (gameStarted && atomPosition < WorldHeight - AtomSize) {
-            timeId = setInterval(() => {
-                setAtomPosition((atomPosition) => atomPosition + gravitation);
-            }, 24)
-        }
+        const gameLoop = setInterval(() => {
+            updateAtomPosition();
+            updateInterceptionLeft();
+            checkGameOver();
+            checkVictory();
+        }, 24);
 
         return () => {
-            clearInterval(timeId)
-        };
-    }, [atomPosition, gameStarted, gravitation]);
+            clearInterval(gameLoop);
+        }
 
-    useEffect(() => {
-        let interceptionId;
+    }, [gameStarted, atomPosition, interceptionLeft, score])
 
-        if (gameStarted && interceptionLeft >= -interceptionWidth) {
-            interceptionId = setInterval(() => {
-                setInterceptionLeft((interceptionLeft) => interceptionLeft - interceptionSpeed);
-            }, 24);
-
-            return () => {
-                clearInterval(interceptionId)
-            }
+    const updateAtomPosition = () => {
+        if (atomPosition < WorldHeight - AtomSize) {
+            setAtomPosition((atomPosition) => atomPosition + gravitation);
+        }
+    };
+    const updateInterceptionLeft = () => {
+        if (interceptionLeft >= -interceptionWidth) {
+            setInterceptionLeft((interceptionLeft) => interceptionLeft - interceptionSpeed);
         } else {
             if (gameStarted) {
                 setInterceptionLeft(WorldWidth - interceptionWidth);
@@ -58,34 +70,23 @@ const App = () => {
                 setScore((score) => score + 1);
 
                 switch (score) {
-                    case 2:
+                    case 6:
                         setInterceptionSpeed(17);
                         break;
-                    case 5:
+                    case 10:
                         setInterceptionSpeed(25);
                         break;
-                    case 7: {
+                    case 13:
                         setGravitation(17);
                         setInterceptionSpeed(30);
-                    };
                         break;
-                    case 10:
+                    case 20:
                         setInterceptionSpeed(35);
                 }
             }
-
         }
-
-    }, [atomPosition, gameStarted, interceptionLeft]);
-
-    useEffect(() => {
-        if (score === 42) {
-            setVictory('flex');
-            setGameStarted(false);
-        }
-    }, [score])
-
-    useEffect(() => {
+    }
+    const checkGameOver = () => {
         const crashIntoTopInterception =
             atomPosition >= 0 && atomPosition < interceptionHeight;
         const crashIntoBottomInterception =
@@ -109,20 +110,14 @@ const App = () => {
             setGameOverDisplay('flex');
 
         }
-    }, [atomPosition, interceptionHeight, bottomInterceptionHeight, interceptionLeft]);
-
-    const clickHandler = () => {
-        if (!gameStarted) {
-            setGameStarted(true);
-            setGameOverDisplay('none');
-            setVictory('none');
-        }
-        if (atomPosition < jumpPower) {
-            setAtomPosition(0);
-        } else {
-            setAtomPosition((atomPosition) => atomPosition - jumpPower);
+    };
+    const checkVictory = () => {
+        if (score === 42) {
+            setVictory('flex');
+            setGameStarted(false);
         }
     }
+
     const welcomeClickHandler = () => {
         setWelcomeDisplay('none');
         setVictory('none');
@@ -132,8 +127,8 @@ const App = () => {
         <Container>
             <Header>don't panic</Header>
             <ClockFace>
-            <span>score: <counter>{score}</counter></span>
-                <span>attempts: <counter>{attempts}</counter></span>
+            <span>score: <span>{score}</span></span>
+                <span>attempts: <span>{attempts}</span></span>
             </ClockFace>
                 <Wrapper onClick={clickHandler}>
 
@@ -158,13 +153,13 @@ const App = () => {
                 display={welcomeDisplay}
                 onClick={welcomeClickHandler}
             >
-                <h1>Welcome</h1>
-                <span>Your charge is get 42 points</span>
-                <underSpan>use your intuition</underSpan>
-                <span>to understand the rules</span>
-                <underSpan>press any key to continue</underSpan>
-                <underSpan>and</underSpan>
-                <underSpan>good luck</underSpan>
+                <h1>Welcome! 😄</h1>
+                <span>🎯Your goal is to get 42 points 🎯</span>
+                <span>Use your intuition</span>
+                <span>👩‍💻 to understand the rules 👩‍💻</span>
+                <span>Press any key to continue</span>
+                <span>and</span>
+                <span>🍀 Good luck! 🍀</span>
             </WelcomeDisplay>
             <GameOver
                 display={gameOverDisplay}
@@ -179,7 +174,7 @@ const App = () => {
             >
                 <h1>Congratulations, you are won.</h1>
                 <span>Now you should know the answer of life universe and everything</span>
-                <span>if not try again later, or now, in general you can just click anywhere again</span>
+                <p>In a humorous twist, the supercomputer Deep Thought reveals the answer to the ultimate question of life, the universe, and everything as 42, leaving everyone baffled because they never actually understood the question itself. Lesson learned: it's hard to appreciate an answer when you don't know what you're asking.</p>
             </VictoryDisplay>
         </Container>
     );
@@ -201,7 +196,7 @@ const Atom = styled.div.attrs(
   background-size: cover;
   background-position: center;
   background-color: transparent;
-  animation: atom-spin infinite .01s linear;
+  animation: atom-spin infinite .1s linear;
 
   @keyframes atom-spin {
     from {
@@ -230,7 +225,7 @@ const GameWorld = styled.div.attrs(
   justify-content: center;
   background-color: #0a303a;
   overflow: hidden;
-  border-radius: 10px;
+  border-radius: .3rem;
   border: 10px solid rgba(242, 239, 234, 0.02);
   box-shadow: 10px 10px 10px #403D58;
 
@@ -269,8 +264,8 @@ const ClockFace = styled.div`
   padding: 20px;
   justify-content: space-around;
   bottom: 0;
-  width: 90%;
-  height: 79px;
+  width: 50rem;
+  height: 5rem;
   filter: blur(.4px);
   border-radius: 20px 20px 0 0;
   background-color: rgba(64, 61, 88, 0.3);
@@ -283,29 +278,27 @@ const ClockFace = styled.div`
     filter: none;
     font-weight: bold;
     color: #DBD56E;
-    font-size: 40px;
+    font-size: 2rem;
     position: relative;
+    
+    & > span {
+      font-size: 3rem;
+      padding-left: 1.5rem;
+      color: #F9F2ED;
+    }
   }
 
-  & counter {
-    font-size: 50px;
-    padding-left: 50px;
-    color: #F9F2ED;
-
-  }
 `;
 
 const Header = styled.div`
   user-select: none;
   text-transform: uppercase;
   font-family: 'Chango', cursive;
-  font-size: 60px;
+  font-size: 5rem;
   text-align: center;
   color: #FFB562;
   position: absolute;
-  top: 35px;
-  width: 600px ;
-  height: 10px;
+  top: 2rem;
 `;
 
 const GameOver = styled.div.attrs(
@@ -367,39 +360,33 @@ const WelcomeDisplay = styled.div.attrs(
   & span {
     color: #3C2C3EAD;
     font-size: 30px;
-    align-self: flex-start;
+    align-self: center;
     padding: 10px 40px 0;
     margin: 0 25px;
 
   }
-
-  & underSpan {
-    align-self: flex-end;
-    color: rgba(90, 35, 96, 0.75);
-    font-size: 30px;
-    padding: 10px 40px;
-    margin: 0 25px;
-  }
 `;
 
 const VictoryDisplay = styled.div.attrs(
-    ({display}) => ({
-        style: {
-            display: display,
-        }
-    })
+          ({display}) => ({
+              style: {
+                  display: display,
+              }
+          })
 )`
   background-color: rgba(0, 0, 0, 0.58);
   position: absolute;
   width: 100vw;
   height: 100vh;
-  color: rgba(249, 242, 237, 0.97);
+  color: rgba(225, 149, 97, 0.97);
+  align-items: center;
+  justify-content: center;
   flex-direction: column;
   backdrop-filter: blur(10px);
-  justify-content: center;
-  align-items: center;
   font-family: 'Chango', cursive;
   user-select: none;
-  z-index: 10000000000;
-
+  
+  & > p {
+    width: 80vw;
+  }
 `;
