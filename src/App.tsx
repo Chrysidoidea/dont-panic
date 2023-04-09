@@ -1,6 +1,7 @@
-import logo from './logo.svg';
-import styled from 'styled-components';
-import {useState, useEffect, HTMLAttributes} from 'react';
+import logo from "./logo.svg";
+import styled from "styled-components";
+import {useState, useEffect, HTMLAttributes} from "react";
+
 import GameOver from "./components/GameOver.component";
 import Welcome from "./components/Welcome.component";
 import Victory from "./components/Victory.component";
@@ -14,9 +15,9 @@ const interceptionGap: number = 200;
 
 
 const App = () => {
-    const [victory, setVictory] = useState('none');
-    const [welcomeDisplay, setWelcomeDisplay] = useState('flex');
-    const [gameOverDisplay, setGameOverDisplay] = useState('none');
+    const [victory, setVictory] = useState("none");
+    const [welcomeDisplay, setWelcomeDisplay] = useState("flex");
+    const [gameOverDisplay, setGameOverDisplay] = useState("none");
     const [attempts, setAttempts] = useState(0);
     const [gravitation, setGravitation] = useState(13);
     const [interceptionSpeed, setInterceptionSpeed] = useState(15);
@@ -29,9 +30,9 @@ const App = () => {
     const clickHandler = (): void => {
         if (!gameStarted) {
             setGameStarted(true);
-            setGameOverDisplay('none');
+            setGameOverDisplay("none");
             setScore(0)
-            setVictory('none');
+            setVictory("none");
         }
         if (atomPosition < jumpPower) {
             setAtomPosition(0);
@@ -110,20 +111,20 @@ const App = () => {
             setGravitation(13);
             setAttempts((attempts) => attempts + 1);
             setScore(0);
-            setGameOverDisplay('flex');
+            setGameOverDisplay("flex");
 
         }
     };
     const checkVictory = (): void => {
         if (score === 42) {
-            setVictory('flex');
+            setVictory("flex");
             setGameStarted(false);
         }
     }
 
     const welcomeClickHandler = (): void => {
-        setWelcomeDisplay('none');
-        setVictory('none');
+        setWelcomeDisplay("none");
+        setVictory("none");
     }
 
     return (
@@ -148,7 +149,7 @@ const App = () => {
                         height={bottomInterceptionHeight}
                         left={interceptionLeft}
                     />
-                    <Atom logo={logo} size={AtomSize} className='atom' position={atomPosition}/>
+                    <Atom logo={logo} size={AtomSize} className="atom" position={atomPosition}/>
                 </GameWorld>
 
             </Wrapper>
@@ -216,8 +217,8 @@ interface GameWorldProps {
 const GameWorld = styled.div.attrs<GameWorldProps>(
     ({width, height}) => ({
         style: {
-            width: width + 'px',
-            height: height + 'px',
+            width: width + "px",
+            height: height + "px",
         }
     })
 )<GameWorldProps>`
@@ -240,10 +241,10 @@ interface InterceptionProps {
 const Interception = styled.div.attrs<InterceptionProps>(
     ({left, top, width, height}) => ({
         style: {
-            left: left + 'px',
-            top: top + 'px',
-            width: width + 'px',
-            height: height + 'px',
+            left: left + "px",
+            top: top + "px",
+            width: width + "px",
+            height: height + "px",
         }
     })
 )<InterceptionProps>`
@@ -300,81 +301,13 @@ const ClockFace = styled.div`
 const Header = styled.div`
   user-select: none;
   text-transform: uppercase;
-  font-family: 'Chango', cursive;
+  font-family: "Chango", cursive;
   font-size: 5rem;
   text-align: center;
   color: #FFB562;
   position: absolute;
   top: 2rem;
 `;
-//
-// const GameOver = styled.div.attrs<DisplayProps>(
-//     ({display}) => ({
-//         style: {
-//             display: display,
-//         }
-//     })
-// )<DisplayProps>`
-//   position: absolute;
-//   top: 0;
-//   width: 100vw;
-//   height: 100vh;
-//   backdrop-filter: blur(5px);
-//   align-items: center;
-//   justify-content: center;
-//   flex-direction: column;
-//   font-family: 'Chango', cursive;
-//   font-size: 35px;
-//   background-color: rgba(9, 28, 40, 0.82);
-//   transition: 1s;
-//   user-select: none;
-//
-//   & h1 {
-//     color: #F87474;
-//   }
-//
-//   & span {
-//     color: #FFB562;
-//   }
-// `;
-
-
-// const WelcomeDisplay = styled.div.attrs<DisplayProps>(
-//     ({display}) => ({
-//         style: {
-//             display: display,
-//         }
-//     })
-// )<DisplayProps>`
-//   position: absolute;
-//   top: 0;
-//   width: 100vw;
-//   height: 100vh;
-//   justify-content: center;
-//   align-items: center;
-//   flex-direction: column;
-//   backdrop-filter: blur(5px);
-//   background-color: rgba(249, 242, 237, 0.7);
-//   z-index: 10000000000;
-//   font-family: 'Chango', cursive;
-//   user-select: none;
-//
-//
-//   & h1 {
-//     color: rgba(60, 44, 62, 0.68);
-//     font-size: 75px;
-//   }
-//
-//   & span {
-//     color: #3C2C3EAD;
-//     font-size: 30px;
-//     align-self: center;
-//     padding: 10px 40px 0;
-//     margin: 0 25px;
-//
-//   }
-// `;
-
 export interface DisplayProps {
     display: string;
     onClick?: () => void;
